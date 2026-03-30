@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @db.Uuid
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  documents Document[]
+  accesses  DocumentAccess[]
+}
+
+model Document {
+  id        String   @id @default(uuid()) @db.Uuid
+  title     String   @default("Untitled Document")
+  content   Json     @default("{}")
+  ownerId   String   @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner    User             @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  shares   DocumentShare[]
+  accesses DocumentAccess[]
+
+  @@index([ownerId])
+}
+
+model DocumentShare {
+  id         String    @id @default(uuid()) @db.Uuid
+  documentId String    @db.Uuid
+  shareToken String    @unique
+  role       ShareRole @default(VIEWER)
+  createdAt  DateTime  @default(now())
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([shareToken])
+  @@index([documentId])
+}
+
+model DocumentAccess {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @db.Uuid
+  documentId String   @db.Uuid
+  accessedAt DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, documentId])
+}
+
+enum ShareRole {
+  VIEWER
+  EDITOR
+}
