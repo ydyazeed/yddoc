@@ -1,5 +1,14 @@
 # YDDoc
 
+**Live demo:** https://yddoc.vercel.app
+
+## Test Accounts
+
+| Email | Password |
+|-------|----------|
+| test@example.com | Test |
+| test1@example.com | Test1 |
+
 A lightweight collaborative document editor. Create, edit, and share documents with rich text formatting and link-based access control.
 
 ## Features
