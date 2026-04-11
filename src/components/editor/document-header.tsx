@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useRef } from "react"
 import Link from "next/link"
-import { ArrowLeft, Share2 } from "lucide-react"
+import { ArrowLeft, Printer } from "lucide-react"
 import { updateDocument } from "@/actions/documents"
 import { useAutoSave } from "@/hooks/use-auto-save"
 import { SaveIndicator } from "./save-indicator"
@@ -68,6 +68,15 @@ export function DocumentHeader({
 
         {/* Right actions */}
         <div className="flex items-center gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={() => window.print()}
+            aria-label="Print document"
+            className="flex items-center gap-2 bg-white border-2 border-[#1A1A2E] rounded-full px-4 py-1.5 text-sm font-semibold text-[#1A1A2E] shadow-[4px_4px_0px_0px_#1A1A2E] transition-all duration-150 hover:shadow-[2px_2px_0px_0px_#1A1A2E] hover:translate-x-[1px] hover:translate-y-[1px] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
+          >
+            <Printer className="w-4 h-4" />
+            Print
+          </button>
           {isOwner && shareButton}
         </div>
       </div>

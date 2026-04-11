@@ -17,6 +17,7 @@ import type { Prisma } from "@prisma/client"
 type TiptapEditorProps = {
   documentId: string
   initialContent: Prisma.JsonValue
+  initialTitle: string
   editable?: boolean
   shareToken?: string
 }
@@ -24,6 +25,7 @@ type TiptapEditorProps = {
 export function TiptapEditor({
   documentId,
   initialContent,
+  initialTitle,
   editable = true,
   shareToken,
 }: TiptapEditorProps) {
@@ -61,8 +63,10 @@ export function TiptapEditor({
 
   if (!editor) return null
 
+  const trimmedTitle = initialTitle.trim()
+
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4" data-print-root>
       {editable && (
         <div className="flex items-center gap-4 sticky top-[73px] z-10">
           <Toolbar editor={editor} />
@@ -70,7 +74,12 @@ export function TiptapEditor({
         </div>
       )}
 
-      <div className="bg-white border-2 border-[#1A1A2E] rounded-xl p-8 shadow-[4px_4px_0px_0px_#1A1A2E]">
+      <div className="print-chrome bg-white border-2 border-[#1A1A2E] rounded-xl p-8 shadow-[4px_4px_0px_0px_#1A1A2E]">
+        {trimmedTitle && (
+          <h1 className="hidden print:block text-3xl font-bold mb-6 pb-3 border-b-2 border-[#1A1A2E]">
+            {trimmedTitle}
+          </h1>
+        )}
         <EditorContent editor={editor} />
       </div>
     </div>

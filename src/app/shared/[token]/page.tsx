@@ -1,16 +1,31 @@
+import { cache } from "react"
 import { notFound } from "next/navigation"
+import type { Metadata } from "next"
 import { getDocumentByToken, recordDocumentAccess } from "@/actions/shares"
 import { TiptapEditor } from "@/components/editor/tiptap-editor"
 import { DocumentHeader } from "@/components/editor/document-header"
 import type { Prisma } from "@prisma/client"
 
+const loadShare = cache(getDocumentByToken)
+
+type SharedDocumentPageProps = {
+  params: Promise<{ token: string }>
+}
+
+export async function generateMetadata({
+  params,
+}: SharedDocumentPageProps): Promise<Metadata> {
+  const { token } = await params
+  const share = await loadShare(token)
+  const title = share?.document?.title?.trim()
+  return { title: title || "YDDoc" }
+}
+
 export default async function SharedDocumentPage({
   params,
-}: {
-  params: Promise<{ token: string }>
-}) {
+}: SharedDocumentPageProps) {
   const { token } = await params
-  const share = await getDocumentByToken(token)
+  const share = await loadShare(token)
 
   if (!share) notFound()
 
@@ -42,6 +57,7 @@ export default async function SharedDocumentPage({
         <TiptapEditor
           documentId={share.document.id}
           initialContent={share.document.content as Prisma.JsonValue}
+          initialTitle={share.document.title}
           editable={isEditor}
           shareToken={isEditor ? token : undefined}
         />
